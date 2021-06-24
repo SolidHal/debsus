@@ -27,6 +27,7 @@ device_veyron_minnie="Google Minnie"
 device_veyron_mickey="Google Mickey"
 device_gru_kevin="Google Kevin"
 device_gru_bob="Google Bob"
+device_gru_scarlet="Google Scarlet"
 
 get_device() {
     local device=$(tr -d '\0' < /sys/firmware/devicetree/base/model)
@@ -34,11 +35,23 @@ get_device() {
 }
 
 get_emmc_devname() {
+<<<<<<< HEAD
+    local device=$(get_device)
+    case "$device" in
+        $device_veyron_speedy) local devname=mmcblk2;;
+        $device_veyron_minnie) local devname=mmcblk2;;
+        $device_gru_kevin) local devname=mmcblk1;;
+        $device_gru_bob) local devname=mmcblk1;;
+				$device_gru_scarlet) local devname=mmcblk1;;
+        * ) echo "Unknown device! can't determine emmc devname. Please file an issue with the output of fdisk -l if you get this on a supported device"; exit 1;;
+    esac
+=======
     local devname=$(ls /dev/mmcblk* | grep -F boot0 | sed "s/boot0//")
     if [ -z "$devname" ]
     then
         echo "Unknown device! can't determine emmc devname. Please file an issue with the output of fdisk -l if you get this on a supported device"; exit 1;;
     fi
+>>>>>>> SolidHal/master
     echo $devname
 }
 
@@ -50,6 +63,7 @@ get_sd_devname() {
         $device_veyron_mickey) local devname="";;
         $device_gru_kevin) local devname=mmcblk0;;
         $device_gru_bob) local devname=mmcblk0;;
+				$device_gru_scarlet) local devname=mmcblk0;;
         * ) echo "Unknown device! can't determine sd card devname. Please file an issue with the output of fdisk -l if you get this on a supported device"; exit 1;;
     esac
     echo $devname
@@ -121,9 +135,18 @@ then
   apt install -y ${xfce_debs_download[@]}
   apt install -y ${prawnos_xfce_debs_prebuilt_download[@]}
 
+<<<<<<< HEAD
+if [[ $device_model == $device_gru_kevin ]] || [[ $device_model == $device_gru_bob ]] || [[ $device_model == $device_gru_scarlet ]]
+then
+    #same bash trackpad config works well enough
+    mkdir -p /etc/X11/xorg.conf.d/
+    cp -rf $DIR/30-touchpad.conf /etc/X11/xorg.conf.d/
+fi
+=======
   # remove light-locker, as it is broken on this machine. See issue https://github.com/SolidHal/PrawnOS/issues/56#issuecomment-504681175
   apt remove -y light-locker
   apt purge -y light-locker
+>>>>>>> SolidHal/master
 
   #Install packages not in an apt repo
   # TODO: likely drop this in favor of just using the upstream
